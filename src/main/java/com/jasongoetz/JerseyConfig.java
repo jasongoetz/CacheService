@@ -8,7 +8,7 @@ public class JerseyConfig extends ResourceConfig {
 
     public JerseyConfig() {
         register(RequestContextFilter.class);
-        packages("com.jasongoetz.rest");
+        packages("com.jasongoetz.resource");
         register(LoggingFeature.class);
     }
 }

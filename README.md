@@ -10,13 +10,19 @@ Compile and run all unit tests:
 mvn install
 ```
 
-Run integration tests with REST Assured after building:
+Run the application
+
+```
+mvn spring-boot:run
+```
+
+Run integration tests with REST Assured during build:
 
 ```
 mvn integration-test
 ```
 
-Run integration tests and fail if anything fails:
+Run integration tests and fail if any tests fail:
 
 ```
 mvn verify
