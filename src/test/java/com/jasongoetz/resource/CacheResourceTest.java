@@ -2,6 +2,7 @@ package com.jasongoetz.resource;
 
 import com.jasongoetz.domain.RequestURL;
 import com.jasongoetz.service.CacheService;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.glassfish.jersey.uri.internal.JerseyUriBuilder;
 import org.junit.Test;
@@ -10,8 +11,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +34,7 @@ public class CacheResourceTest {
     private String googleURL = "http://www.google.com";
 
     @Test
-    public void postTest() throws URISyntaxException {
+    public void postTest() throws URISyntaxException, IOException {
         RequestURL requestURL = new RequestURL();
         requestURL.setUrl(googleURL);
         when(cacheService.addURL(requestURL)).thenReturn(55);
@@ -56,10 +59,15 @@ public class CacheResourceTest {
 
     @Test
     public void getTest() {
-        when(cacheService.getContent(id)).thenReturn(googleURL);
+        Response mockCachedResponse = mock(Response.class);
+        HttpEntity httpEntity = mock(HttpEntity.class);
+        when(mockCachedResponse.getEntity()).thenReturn(httpEntity);
+        when(mockCachedResponse.getHeaders()).thenReturn(new MultivaluedHashMap<>());
+        when(mockCachedResponse.getStatus()).thenReturn(HttpStatus.SC_OK);
+        when(cacheService.getContent(id)).thenReturn(mockCachedResponse);
         Response response = subject.getFromCache(id);
         assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
-        assertThat(response.getEntity()).isEqualTo(googleURL);
+        assertThat(response.getEntity()).isEqualTo(httpEntity);
     }
 
     @Test
